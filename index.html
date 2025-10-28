@@ -1,37 +1,50 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
 <head>
-    <title> "Java Spring Boot Feedback" </title>
-    <style>
-  body {
-    font-family: Arial, sans-serif;
-    padding: 20px;
-    background: #f0f0f0;
-  }
-</style>
+  <meta charset="utf-8">
+  <title>Submit Feedback</title>
 </head>
 <body>
-    <center>
-    <h2>Spring Boot FeedBack</h2>
-    <form>
-    <input type="text" name="Name" placeholder="Enter your name:" required />
-    </form>
-    <p>
+  <h1>Submit Feedback</h1>
+  <form id="feedbackForm">
+    <label>
+      Rating (1-5):
+      <input type="number" id="rating" name="rating" min="1" max="5" required>
+    </label>
+    <br>
+    <label>
+      Comment:
+      <textarea id="comment" name="comment" maxlength="200"></textarea>
+    </label>
+    <br>
+    <button type="submit">Send</button>
+  </form>
 
-    </p>
-    <form>
-    <input type="number" name="Rating" placeholder="give rating out of 5" required />
-    </form>
-    <p>
-        
-    </p>
-    <form>
-    <input type="text" name="Command" placeholder="Write your thoughts" required />
-    </form>
-    <p>
+  <div id="result"></div>
 
-    </p>
-    <button type="submit">Submit</button>
-    </center>
+  <script>
+    document.getElementById('feedbackForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const rating = Number(document.getElementById('rating').value);
+      const comment = document.getElementById('comment').value;
+
+      const payload = { rating, comment };
+
+      try {
+        const res = await fetch('/feedback', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) throw new Error('Network response was not ok');
+
+        const json = await res.json();
+        document.getElementById('result').textContent = 'Success: ' + JSON.stringify(json);
+      } catch (err) {
+        document.getElementById('result').textContent = 'Error: ' + err.message;
+      }
+    });
+  </script>
 </body>
 </html>
